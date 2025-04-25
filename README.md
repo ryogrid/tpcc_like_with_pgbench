@@ -4,7 +4,7 @@ This repository contains a simplified version of the TPC-C benchmark using `pgbe
 
 ## Structure
 - `init/`: Schema and data loader
-- `scripts/`: Benchmark transaction scripts (New Order, Payment, Delivery)
+- `scripts/`: Benchmark transaction scripts (New Order, Payment, Delivery, Stock Level)
 - `analyze/`: Utilities to estimate tpmC
 - `run.sh`: One-click init and benchmark
 
