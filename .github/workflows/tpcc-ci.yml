@@ -1,0 +1,68 @@
+name: TPC-C Benchmark CI
+
+on:
+  push:
+    paths:
+      - '**.sql'
+      - '**.sh'
+      - 'run.sh'
+      - '.github/workflows/tpcc-ci.yml'
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    env:
+      PGPASSWORD: tpccpass
+    services:
+      postgres:
+        image: postgres:16
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: tpcc
+          POSTGRES_PASSWORD: tpccpass
+          POSTGRES_DB: tpcc
+        options: >-
+          --health-cmd="pg_isready -U tpcc"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up PostgreSQL client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client postgresql-contrib
+
+      - name: Wait for PostgreSQL to be ready
+        run: until pg_isready -h localhost -U tpcc; do sleep 1; done
+
+      - name: Initialize schema
+        run: psql -h localhost -U tpcc -d tpcc -f init/01_init_schema.sql
+
+      - name: Load data
+        run: psql -h localhost -U tpcc -d tpcc -f init/02_load_data.sql
+
+      - name: Run New-Order transaction
+        run: pgbench -n -h localhost -U tpcc -d tpcc -f scripts/new_order.sql -c 2 -T 10
+
+      - name: Run Payment transaction
+        run: pgbench -n -h localhost -U tpcc -d tpcc -f scripts/payment.sql -c 2 -T 10
+
+      - name: Run Delivery transaction
+        run: pgbench -n -h localhost -U tpcc -d tpcc -f scripts/delivery.sql -c 2 -T 10
+
+      - name: Run Order-Status transaction
+        run: pgbench -n -h localhost -U tpcc -d tpcc -f scripts/order_status.sql -c 2 -T 10
+
+      - name: Run Stock-Level transaction
+        run: pgbench -n -h localhost -U tpcc -d tpcc -f scripts/stock_level.sql -c 2 -T 10
+
+      - name: Estimate tpmC
+        run: psql -h localhost -U tpcc -d tpcc -f analyze/estimate_tpmc.sql
+
+      - name: Verify foreign key integrity
+        run: |
+          psql -h localhost -U tpcc -d tpcc -c "SELECT COUNT(*) FROM orders o LEFT JOIN customer c ON o.o_c_id = c.c_id WHERE c.c_id IS NULL;"
+          psql -h localhost -U tpcc -d tpcc -c "SELECT COUNT(*) FROM order_line ol LEFT JOIN item i ON ol.ol_i_id = i.i_id WHERE i.i_id IS NULL;"
