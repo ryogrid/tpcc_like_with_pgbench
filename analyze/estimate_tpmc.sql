@@ -1,1 +1,1 @@
-SELECT count(*) * 6 AS tpmC FROM orders WHERE o_entry_d >= now() - interval '10 minutes';
+SELECT count(*) * 6 AS tpmC FROM orders WHERE o_entry_d >= now() - interval '9 minutes';
