@@ -50,3 +50,12 @@ CREATE TABLE order_line (
     ol_amount NUMERIC,
     PRIMARY KEY (ol_o_id, ol_number)
 );
+
+-- インデックス定義
+CREATE INDEX idx_warehouse ON warehouse (w_id);
+CREATE INDEX idx_distinct ON district (d_id);
+CREATE INDEX idx_customer ON customer (c_w_id, c_id);
+CREATE INDEX idx_item ON item (i_id);
+CREATE INDEX idx_stock ON stock (s_i_id, s_w_id);
+CREATE INDEX idx_orders   ON orders (o_w_id, o_d_id, o_c_id);
+CREATE INDEX idx_order_line ON order_line (ol_o_id, ol_supply_w_id, ol_i_id);
