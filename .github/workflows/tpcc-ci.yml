@@ -45,22 +45,22 @@ jobs:
         run: psql -h localhost -U tpcc -d tpcc -f init/02_load_data.sql
 
       - name: Run New-Order transaction
-        run: pgbench -n -h localhost -U tpcc -d tpcc -f scripts/new_order.sql -c 10 -T 300 -q        
+        run: pgbench -n -h localhost -U tpcc -f scripts/new_order.sql -c 10 -T 300 tpcc
       
       # - name: Run transactions
       # run: pgbench -n -h localhost -U tpcc -d tpcc -f scripts/new_order.sql@45 -f scripts/payment.sql@43 -f scripts/delivery.sql@4 -f scripts/order_status.sql@4 -f scripts/stock_level.sql@4 -c 10 -T 300
 
       - name: Run Payment transaction
-        run: pgbench -n -h localhost -U tpcc -d tpcc -f scripts/payment.sql -c 10 -T 60 -q
+        run: pgbench -n -h localhost -U tpcc -f scripts/payment.sql -c 10 -T 60 tpcc
 
       - name: Run Delivery transaction
-        run: pgbench -n -h localhost -U tpcc -d tpcc -f scripts/delivery.sql -c 10 -T 60 -q
+        run: pgbench -n -h localhost -U tpcc -f scripts/delivery.sql -c 10 -T 60 tpcc
 
       - name: Run Order-Status transaction
-        run: pgbench -n -h localhost -U tpcc -d tpcc -f scripts/order_status.sql -c 10 -T 60 -q
+        run: pgbench -n -h localhost -U tpcc -f scripts/order_status.sql -c 10 -T 60 tpcc
 
       - name: Run Stock-Level transaction
-        run: pgbench -n -h localhost -U tpcc -d tpcc -f scripts/stock_level.sql -c 10 -T 60 -q
+        run: pgbench -n -h localhost -U tpcc -f scripts/stock_level.sql -c 10 -T 60 tpcc
 
       - name: Estimate tpmC
         run: psql -h localhost -U tpcc -d tpcc -f analyze/estimate_tpmc.sql
