@@ -1,6 +1,9 @@
 # TPC-C Like Benchmark for PostgreSQL
 
-This repository contains a simplified version of the TPC-C benchmark using `pgbench` custom scripts.
+This repository contains a simplified version of the TPC-C benchmark using `pgbench` custom scripts for finding enhancement needed points of `pgbench`'s custom 
+ script feature.
+
+!!! this project is in progress !!!
 
 ## Structure
 - `init/`: Schema and data loader
