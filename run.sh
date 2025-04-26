@@ -1,4 +1,5 @@
 #!/bin/bash
+### this script doesn't work now. Please use GitHub Actions to run the benchmark. ###
 echo "Initializing..."
 psql -f init/01_init_schema.sql
 psql -f init/02_load_data.sql
