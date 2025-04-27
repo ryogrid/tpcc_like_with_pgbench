@@ -166,6 +166,15 @@ BEGIN
         FOREIGN KEY (s_i_id) REFERENCES item (i_id)
     );
 
+    CREATE INDEX idx_warehouse ON warehouse (w_id);
+    CREATE INDEX idx_distinct ON district (d_id);
+    CREATE INDEX idx_customer ON customer (c_w_id, c_id);
+    CREATE INDEX idx_item ON item (i_id);
+    CREATE INDEX idx_stock ON stock (s_i_id, s_w_id);
+    CREATE INDEX idx_new_order ON new_order (no_w_id, no_d_id, no_o_id);
+    CREATE INDEX idx_orders ON orders (o_w_id, o_d_id, o_c_id);
+    CREATE INDEX idx_order_line ON order_line (ol_o_id, ol_supply_w_id, ol_i_id, ol_number);
+
     ----------------------------------------------------------------
     -- Global sequence for o_id (your New-Order procedure uses it)
     ----------------------------------------------------------------
