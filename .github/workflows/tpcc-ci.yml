@@ -38,17 +38,17 @@ jobs:
       - name: Wait for PostgreSQL to be ready
         run: until pg_isready -h localhost -U tpcc; do sleep 1; done
 
-      - name: Initialize schema
-        run: psql -h localhost -U tpcc -d tpcc -f init/01_init_schema.sql
+      - name: Initialize database
+        run: psql -h localhost -U tpcc -d tpcc -v scale=10 -f init/tpcc_init.sql
 
-      - name: Load data
-        run: psql -h localhost -U tpcc -d tpcc -f init/02_load_data.sql
+      # - name: Load data
+      #   run: psql -h localhost -U tpcc -d tpcc -f init/02_load_data.sql
 
       # - name: Run New-Order transaction
       #   run: pgbench -n -h localhost -U tpcc -f scripts/new_order.sql -c 10 -T 300 tpcc
       
-      - name: Run transactions
-        run: pgbench -n -h localhost -U tpcc -f scripts/new_order.sql@45 -f scripts/payment.sql@43 -f scripts/delivery.sql@4 -f scripts/order_status.sql@4 -f scripts/stock_level.sql@4 -c 10 -T 300 tpcc
+      # - name: Run transactions
+      #   run: pgbench -n -h localhost -U tpcc -f scripts/new_order.sql@45 -f scripts/payment.sql@43 -f scripts/delivery.sql@4 -f scripts/order_status.sql@4 -f scripts/stock_level.sql@4 -c 10 -T 300 tpcc
 
       # - name: Run Payment transaction
       #   run: pgbench -n -h localhost -U tpcc -f scripts/payment.sql -c 10 -T 60 tpcc
@@ -62,6 +62,8 @@ jobs:
       # - name: Run Stock-Level transaction
       #   run: pgbench -n -h localhost -U tpcc -f scripts/stock_level.sql -c 10 -T 60 tpcc
 
+      - name: Run TPC-C benchmark transactions
+        run: pgbench -n -f scripts/new_order.sql@45 -f scripts/payment.sql@43 -f scripts/order_status.sql@4 -f scripts/delivery.sql@4 -f scripts/stock_level.sql@4 -h localhost -U tpcc -M prepared --scale 10 -T 300 -c 32 -j 32 tpcc
       - name: Estimate tpmC
         run: psql -h localhost -U tpcc -d tpcc -f analyze/estimate_tpmc.sql
 
