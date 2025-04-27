@@ -1,1 +1,1 @@
-SELECT count(*) / 5 AS tpmC FROM orders WHERE o_entry_d >= now() - interval '9 minutes';
+SELECT count(*) / 5 AS tpmC FROM orders WHERE o_entry_d >= now() - interval '5 minutes';
