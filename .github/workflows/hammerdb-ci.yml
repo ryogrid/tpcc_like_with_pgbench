@@ -1,0 +1,74 @@
+name: HammerDB TPROC-C Benchmark CI
+
+on:
+    workflow_dispatch:
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    env:
+      PGPASSWORD: tpccpass
+    services:
+      postgres:
+        image: postgres:17
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: tpcc
+          POSTGRES_PASSWORD: tpccpass
+          POSTGRES_DB: tpcc
+        options: >-
+          --health-cmd="pg_isready -U tpcc" --health-interval=10s --health-timeout=5s --health-retries=5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install PostgreSQL client and utilities
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client postgresql-contrib wget tar
+
+      - name: Wait for PostgreSQL to be ready
+        run: |
+          until pg_isready -h localhost -U tpcc; do sleep 1; done
+
+      - name: Download and extract HammerDB
+        run: |
+          wget https://github.com/TPC-Council/HammerDB/releases/download/v4.7/HammerDB-4.7-Linux.tar.gz
+          tar xvfz HammerDB-4.7-Linux.tar.gz
+
+      - name: Generate TPROC-C TCL script
+        run: |
+          cat << 'EOF' > tprocc_pg.tcl
+          dbset db pg
+          dbset bm TPROC-C
+          diset connection pg_host localhost
+          diset connection pg_port 5432
+          diset tpcc pg_superuser tpcc
+          diset tpcc pg_superuserpass tpccpass
+          diset tpcc pg_defaultdbase tpcc
+          diset tpcc pg_user tpcc
+          diset tpcc pg_pass tpccpass
+          diset tpcc pg_dbase tpcc
+          diset tpcc pg_count_ware 10
+          diset tpcc pg_num_vu 10
+          buildschema
+          vudestroy
+          diset tpcc pg_driver timed
+          diset tpcc pg_timeprofile true
+          loadscript
+          vuset vu 10
+          vuset logtotemp 1
+          vuset unique 1
+          vuset timestamps 1
+          vucreate
+          vurun
+          exit
+          EOF
+
+      - name: Execute HammerDB TPROC-C benchmark
+        run: |
+          cd HammerDB-4.7
+          chmod +x hammerdbcli
+          ./hammerdbcli < ../tprocc_pg.tcl
