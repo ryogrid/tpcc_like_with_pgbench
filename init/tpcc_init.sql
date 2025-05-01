@@ -47,6 +47,7 @@ BEGIN
         w_tax       NUMERIC(4,4),
         w_ytd       NUMERIC(12,2)
     );
+    ALTER TABLE warehouse SET (autovacuum_enabled = false,toast.autovacuum_enabled = false);
 
     CREATE TABLE district (
         d_id         INTEGER,
@@ -63,6 +64,7 @@ BEGIN
         PRIMARY KEY (d_w_id, d_id)--,
         -- FOREIGN KEY (d_w_id) REFERENCES warehouse (w_id)
     );
+    ALTER TABLE district SET (autovacuum_enabled = false,toast.autovacuum_enabled = false);
 
     CREATE TABLE customer (
         c_id           INTEGER,
@@ -89,6 +91,7 @@ BEGIN
         PRIMARY KEY (c_w_id, c_d_id, c_id)--,
         -- FOREIGN KEY (c_w_id, c_d_id) REFERENCES district (d_w_id, d_id)
     );
+    ALTER TABLE customer SET (autovacuum_enabled = false,toast.autovacuum_enabled = false);
 
     CREATE TABLE history (
         h_c_id     INTEGER,
@@ -100,6 +103,7 @@ BEGIN
         h_amount   NUMERIC(6,2),
         h_data     VARCHAR(24)
     );
+    ALTER TABLE history SET (autovacuum_enabled = false,toast.autovacuum_enabled = false);
 
     CREATE TABLE orders (
         o_id         INTEGER,
@@ -115,6 +119,7 @@ BEGIN
         -- FOREIGN KEY (o_w_id, o_d_id, o_c_id)
         --              REFERENCES customer (c_w_id, c_d_id, c_id)
     );
+    ALTER TABLE orders SET (autovacuum_enabled = false,toast.autovacuum_enabled = false);
 
     CREATE TABLE new_order (
         no_o_id  INTEGER,
@@ -124,6 +129,7 @@ BEGIN
         -- FOREIGN KEY (no_w_id, no_d_id, no_o_id)
         --              REFERENCES orders (o_w_id, o_d_id, o_id)
     );
+    ALTER TABLE new_order SET (autovacuum_enabled = false,toast.autovacuum_enabled = false);
 
     CREATE TABLE order_line (
         ol_o_id        INTEGER,
@@ -140,6 +146,7 @@ BEGIN
         -- FOREIGN KEY (ol_w_id, ol_d_id, ol_o_id)
         --              REFERENCES orders (o_w_id, o_d_id, o_id)
     );
+    ALTER TABLE order_line SET (autovacuum_enabled = false,toast.autovacuum_enabled = false);
 
     CREATE TABLE item (
         i_id     INTEGER PRIMARY KEY,
@@ -148,6 +155,7 @@ BEGIN
         i_price  NUMERIC(5,2),
         i_data   VARCHAR(50)
     );
+    ALTER TABLE item SET (autovacuum_enabled = false,toast.autovacuum_enabled = false);
 
     CREATE TABLE stock (
         s_i_id        INTEGER,
@@ -165,6 +173,7 @@ BEGIN
         -- FOREIGN KEY (s_w_id) REFERENCES warehouse (w_id),
         -- FOREIGN KEY (s_i_id) REFERENCES item (i_id)
     );
+    ALTER TABLE stock SET (autovacuum_enabled = false,toast.autovacuum_enabled = false);
 
     -- CREATE INDEX idx_warehouse ON warehouse (w_id);
     -- CREATE INDEX idx_distinct ON district (d_id);
