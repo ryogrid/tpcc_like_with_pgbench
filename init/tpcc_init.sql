@@ -60,7 +60,7 @@ BEGIN
         d_tax        NUMERIC(4,4),
         d_ytd        NUMERIC(12,2),
         d_next_o_id  INTEGER,
-        PRIMARY KEY (d_w_id, d_id),
+        PRIMARY KEY (d_w_id, d_id)--,
         -- FOREIGN KEY (d_w_id) REFERENCES warehouse (w_id)
     );
 
@@ -86,7 +86,7 @@ BEGIN
         c_payment_cnt  INTEGER,
         c_delivery_cnt INTEGER,
         c_data         TEXT,
-        PRIMARY KEY (c_w_id, c_d_id, c_id),
+        PRIMARY KEY (c_w_id, c_d_id, c_id)--,
         -- FOREIGN KEY (c_w_id, c_d_id) REFERENCES district (d_w_id, d_id)
     );
 
@@ -110,7 +110,7 @@ BEGIN
         o_carrier_id INTEGER,
         o_ol_cnt     INTEGER,
         o_all_local  INTEGER,
-        PRIMARY KEY (o_w_id, o_d_id, o_id),
+        PRIMARY KEY (o_w_id, o_d_id, o_id)--,
         -- FOREIGN KEY (o_w_id, o_d_id) REFERENCES district (d_w_id, d_id),
         -- FOREIGN KEY (o_w_id, o_d_id, o_c_id)
         --              REFERENCES customer (c_w_id, c_d_id, c_id)
@@ -120,7 +120,7 @@ BEGIN
         no_o_id  INTEGER,
         no_d_id  INTEGER,
         no_w_id  INTEGER,
-        PRIMARY KEY (no_w_id, no_d_id, no_o_id),
+        PRIMARY KEY (no_w_id, no_d_id, no_o_id)--,
         -- FOREIGN KEY (no_w_id, no_d_id, no_o_id)
         --              REFERENCES orders (o_w_id, o_d_id, o_id)
     );
@@ -136,7 +136,7 @@ BEGIN
         ol_quantity    INTEGER,
         ol_amount      NUMERIC(6,2),
         ol_dist_info   CHAR(24),
-        PRIMARY KEY (ol_w_id, ol_d_id, ol_o_id, ol_number),
+        PRIMARY KEY (ol_w_id, ol_d_id, ol_o_id, ol_number)--,
         -- FOREIGN KEY (ol_w_id, ol_d_id, ol_o_id)
         --              REFERENCES orders (o_w_id, o_d_id, o_id)
     );
@@ -161,7 +161,7 @@ BEGIN
         s_order_cnt   INTEGER,
         s_remote_cnt  INTEGER,
         s_data        VARCHAR(50),
-        PRIMARY KEY (s_w_id, s_i_id),
+        PRIMARY KEY (s_w_id, s_i_id)--,
         -- FOREIGN KEY (s_w_id) REFERENCES warehouse (w_id),
         -- FOREIGN KEY (s_i_id) REFERENCES item (i_id)
     );

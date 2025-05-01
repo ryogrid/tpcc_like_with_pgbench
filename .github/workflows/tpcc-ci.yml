@@ -63,7 +63,7 @@ jobs:
       #   run: pgbench -n -h localhost -U tpcc -f scripts/stock_level.sql -c 10 -T 60 tpcc
 
       - name: Run TPC-C benchmark transactions
-        run: pgbench -n -f scripts/new_order.sql@45 -f scripts/payment.sql@43 -f scripts/order_status.sql@4 -f scripts/delivery.sql@4 -f scripts/stock_level.sql@4 -h localhost -U tpcc -M prepared --scale 10 -T 300 -c 10 -j 10 tpcc
+        run: pgbench -n -f scripts/new_order.sql@45 -f scripts/payment.sql@43 -f scripts/order_status.sql@4 -f scripts/delivery.sql@4 -f scripts/stock_level.sql@4 -h localhost -U tpcc -M prepared --scale 10 -T 420 -c 10 -j 10 tpcc
       - name: Estimate tpmC
         run: psql -h localhost -U tpcc -d tpcc -f analyze/estimate_tpmc.sql
 
