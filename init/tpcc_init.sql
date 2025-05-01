@@ -61,7 +61,7 @@ BEGIN
         d_ytd        NUMERIC(12,2),
         d_next_o_id  INTEGER,
         PRIMARY KEY (d_w_id, d_id),
-        FOREIGN KEY (d_w_id) REFERENCES warehouse (w_id)
+        -- FOREIGN KEY (d_w_id) REFERENCES warehouse (w_id)
     );
 
     CREATE TABLE customer (
@@ -87,7 +87,7 @@ BEGIN
         c_delivery_cnt INTEGER,
         c_data         TEXT,
         PRIMARY KEY (c_w_id, c_d_id, c_id),
-        FOREIGN KEY (c_w_id, c_d_id) REFERENCES district (d_w_id, d_id)
+        -- FOREIGN KEY (c_w_id, c_d_id) REFERENCES district (d_w_id, d_id)
     );
 
     CREATE TABLE history (
@@ -111,9 +111,9 @@ BEGIN
         o_ol_cnt     INTEGER,
         o_all_local  INTEGER,
         PRIMARY KEY (o_w_id, o_d_id, o_id),
-        FOREIGN KEY (o_w_id, o_d_id) REFERENCES district (d_w_id, d_id),
-        FOREIGN KEY (o_w_id, o_d_id, o_c_id)
-                     REFERENCES customer (c_w_id, c_d_id, c_id)
+        -- FOREIGN KEY (o_w_id, o_d_id) REFERENCES district (d_w_id, d_id),
+        -- FOREIGN KEY (o_w_id, o_d_id, o_c_id)
+        --              REFERENCES customer (c_w_id, c_d_id, c_id)
     );
 
     CREATE TABLE new_order (
@@ -121,8 +121,8 @@ BEGIN
         no_d_id  INTEGER,
         no_w_id  INTEGER,
         PRIMARY KEY (no_w_id, no_d_id, no_o_id),
-        FOREIGN KEY (no_w_id, no_d_id, no_o_id)
-                     REFERENCES orders (o_w_id, o_d_id, o_id)
+        -- FOREIGN KEY (no_w_id, no_d_id, no_o_id)
+        --              REFERENCES orders (o_w_id, o_d_id, o_id)
     );
 
     CREATE TABLE order_line (
@@ -137,8 +137,8 @@ BEGIN
         ol_amount      NUMERIC(6,2),
         ol_dist_info   CHAR(24),
         PRIMARY KEY (ol_w_id, ol_d_id, ol_o_id, ol_number),
-        FOREIGN KEY (ol_w_id, ol_d_id, ol_o_id)
-                     REFERENCES orders (o_w_id, o_d_id, o_id)
+        -- FOREIGN KEY (ol_w_id, ol_d_id, ol_o_id)
+        --              REFERENCES orders (o_w_id, o_d_id, o_id)
     );
 
     CREATE TABLE item (
@@ -162,18 +162,18 @@ BEGIN
         s_remote_cnt  INTEGER,
         s_data        VARCHAR(50),
         PRIMARY KEY (s_w_id, s_i_id),
-        FOREIGN KEY (s_w_id) REFERENCES warehouse (w_id),
-        FOREIGN KEY (s_i_id) REFERENCES item (i_id)
+        -- FOREIGN KEY (s_w_id) REFERENCES warehouse (w_id),
+        -- FOREIGN KEY (s_i_id) REFERENCES item (i_id)
     );
 
     CREATE INDEX idx_warehouse ON warehouse (w_id);
     CREATE INDEX idx_distinct ON district (d_id);
-    CREATE INDEX idx_customer ON customer (c_w_id, c_id);
+    -- CREATE INDEX idx_customer ON customer (c_w_id, c_id);
     CREATE INDEX idx_item ON item (i_id);
-    CREATE INDEX idx_stock ON stock (s_i_id, s_w_id);
-    CREATE INDEX idx_new_order ON new_order (no_w_id, no_d_id, no_o_id);
-    CREATE INDEX idx_orders ON orders (o_w_id, o_d_id, o_c_id);
-    CREATE INDEX idx_order_line ON order_line (ol_o_id, ol_supply_w_id, ol_i_id, ol_number);
+    -- CREATE INDEX idx_stock ON stock (s_i_id, s_w_id);
+    -- CREATE INDEX idx_new_order ON new_order (no_w_id, no_d_id, no_o_id);
+    -- CREATE INDEX idx_orders ON orders (o_w_id, o_d_id, o_c_id);
+    -- CREATE INDEX idx_order_line ON order_line (ol_o_id, ol_supply_w_id, ol_i_id, ol_number);
 
     ----------------------------------------------------------------
     -- Global sequence for o_id (your New-Order procedure uses it)
