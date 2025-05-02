@@ -31,7 +31,7 @@ BEGIN
     DROP TABLE IF EXISTS item         CASCADE;
     DROP TABLE IF EXISTS district     CASCADE;
     DROP TABLE IF EXISTS warehouse    CASCADE;
-    DROP SEQUENCE IF EXISTS order_id_seq CASCADE;
+    -- DROP SEQUENCE IF EXISTS order_id_seq CASCADE;
 
     ----------------------------------------------------------------
     -- Tables  (identical to those used in the earlier procedures)
@@ -46,12 +46,12 @@ BEGIN
         w_zip       CHAR(9),
         w_tax       NUMERIC(4,4),
         w_ytd       NUMERIC(12,2)
-    );
+    ) WITH (fillfactor=10);
     ALTER TABLE warehouse SET (autovacuum_enabled = false,toast.autovacuum_enabled = false);
 
     CREATE TABLE district (
-        d_id         INTEGER,
-        d_w_id       INTEGER,
+        d_id         INTEGER NOT NULL,
+        d_w_id       INTEGER NOT NULL,
         d_name       VARCHAR(10),
         d_street_1   VARCHAR(20),
         d_street_2   VARCHAR(20),
@@ -63,13 +63,13 @@ BEGIN
         d_next_o_id  INTEGER,
         PRIMARY KEY (d_w_id, d_id)--,
         -- FOREIGN KEY (d_w_id) REFERENCES warehouse (w_id)
-    );
+    ) WITH (fillfactor=10);
     ALTER TABLE district SET (autovacuum_enabled = false,toast.autovacuum_enabled = false);
 
     CREATE TABLE customer (
-        c_id           INTEGER,
-        c_d_id         INTEGER,
-        c_w_id         INTEGER,
+        c_id           INTEGER NOT NULL,
+        c_d_id         INTEGER NOT NULL,
+        c_w_id         INTEGER NOT NULL,
         c_first        VARCHAR(16),
         c_middle       CHAR(2),
         c_last         VARCHAR(16),
@@ -90,8 +90,10 @@ BEGIN
         c_data         TEXT,
         PRIMARY KEY (c_w_id, c_d_id, c_id)--,
         -- FOREIGN KEY (c_w_id, c_d_id) REFERENCES district (d_w_id, d_id)
-    );
+    ) WITH (fillfactor=50);
     ALTER TABLE customer SET (autovacuum_enabled = false,toast.autovacuum_enabled = false);
+    CREATE UNIQUE INDEX idx_customer 
+        ON customer (c_w_id, c_d_id, c_last, c_first, c_id);
 
     CREATE TABLE history (
         h_c_id     INTEGER,
@@ -102,13 +104,13 @@ BEGIN
         h_date     TIMESTAMP,
         h_amount   NUMERIC(6,2),
         h_data     VARCHAR(24)
-    );
+    ) WITH (fillfactor=50);
     ALTER TABLE history SET (autovacuum_enabled = false,toast.autovacuum_enabled = false);
 
     CREATE TABLE orders (
-        o_id         INTEGER,
-        o_d_id       INTEGER,
-        o_w_id       INTEGER,
+        o_id         INTEGER NOT NULL,
+        o_d_id       INTEGER NOT NULL,
+        o_w_id       INTEGER NOT NULL,
         o_c_id       INTEGER,
         o_entry_d    TIMESTAMP,
         o_carrier_id INTEGER,
@@ -118,24 +120,26 @@ BEGIN
         -- FOREIGN KEY (o_w_id, o_d_id) REFERENCES district (d_w_id, d_id),
         -- FOREIGN KEY (o_w_id, o_d_id, o_c_id)
         --              REFERENCES customer (c_w_id, c_d_id, c_id)
-    );
+    ) WITH (fillfactor=50);
     ALTER TABLE orders SET (autovacuum_enabled = false,toast.autovacuum_enabled = false);
+    CREATE UNIQUE INDEX idx_orders 
+        ON orders (o_w_id, o_d_id, o_c_id, o_id);
 
     CREATE TABLE new_order (
-        no_o_id  INTEGER,
-        no_d_id  INTEGER,
-        no_w_id  INTEGER,
+        no_o_id  INTEGER NOT NULL,
+        no_d_id  INTEGER NOT NULL,
+        no_w_id  INTEGER NOT NULL,
         PRIMARY KEY (no_w_id, no_d_id, no_o_id)--,
         -- FOREIGN KEY (no_w_id, no_d_id, no_o_id)
         --              REFERENCES orders (o_w_id, o_d_id, o_id)
-    );
+    ) WITH (fillfactor=50);
     ALTER TABLE new_order SET (autovacuum_enabled = false,toast.autovacuum_enabled = false);
 
     CREATE TABLE order_line (
-        ol_o_id        INTEGER,
-        ol_d_id        INTEGER,
-        ol_w_id        INTEGER,
-        ol_number      INTEGER,
+        ol_o_id        INTEGER NOT NULL,
+        ol_d_id        INTEGER NOT NULL,
+        ol_w_id        INTEGER NOT NULL,
+        ol_number      INTEGER NOT NULL,
         ol_i_id        INTEGER,
         ol_supply_w_id INTEGER,
         ol_delivery_d  TIMESTAMP,
@@ -145,7 +149,7 @@ BEGIN
         PRIMARY KEY (ol_w_id, ol_d_id, ol_o_id, ol_number)--,
         -- FOREIGN KEY (ol_w_id, ol_d_id, ol_o_id)
         --              REFERENCES orders (o_w_id, o_d_id, o_id)
-    );
+    ) WITH (fillfactor=50);
     ALTER TABLE order_line SET (autovacuum_enabled = false,toast.autovacuum_enabled = false);
 
     CREATE TABLE item (
@@ -154,12 +158,12 @@ BEGIN
         i_name   VARCHAR(24),
         i_price  NUMERIC(5,2),
         i_data   VARCHAR(50)
-    );
+    ) WITH (fillfactor=50);
     ALTER TABLE item SET (autovacuum_enabled = false,toast.autovacuum_enabled = false);
 
     CREATE TABLE stock (
-        s_i_id        INTEGER,
-        s_w_id        INTEGER,
+        s_i_id        INTEGER NOT NULL,
+        s_w_id        INTEGER NOT NULL,
         s_quantity    INTEGER,
         s_dist_01     CHAR(24), s_dist_02 CHAR(24), s_dist_03 CHAR(24),
         s_dist_04     CHAR(24), s_dist_05 CHAR(24), s_dist_06 CHAR(24),
@@ -172,7 +176,7 @@ BEGIN
         PRIMARY KEY (s_w_id, s_i_id)--,
         -- FOREIGN KEY (s_w_id) REFERENCES warehouse (w_id),
         -- FOREIGN KEY (s_i_id) REFERENCES item (i_id)
-    );
+    ) WITH (fillfactor=50);
     ALTER TABLE stock SET (autovacuum_enabled = false,toast.autovacuum_enabled = false);
 
     -- CREATE INDEX idx_warehouse ON warehouse (w_id);
@@ -187,7 +191,7 @@ BEGIN
     ----------------------------------------------------------------
     -- Global sequence for o_id (your New-Order procedure uses it)
     ----------------------------------------------------------------
-    CREATE SEQUENCE order_id_seq START 1;
+    -- CREATE SEQUENCE order_id_seq START 1;
 END;
 $$;
 
