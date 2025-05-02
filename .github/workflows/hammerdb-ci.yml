@@ -78,3 +78,6 @@ jobs:
           cd HammerDB-4.7
           chmod +x hammerdbcli
           ./hammerdbcli auto ../tprocc_pg.tcl
+      
+      - name: Print HammerDB stored procedure definition
+        run: psql -h localhost -U tpcc -d tpcc -a -b -t -A -c "SELECT pg_get_functiondef(foids.foid) from (SELECT t.oid AS foid FROM pg_proc t, pg_namespace n WHERE t.pronamespace = n.oid AND n.nspname = 'tpcc') AS foids;"
